@@ -291,7 +291,7 @@ if [[ "$SpikCheckDIST" == '0' ]]; then
 fi
 
 [[ "$ddMode" == '1' ]] && {
-  export SSL_SUPPORT='https://111111.online/cloud/docs/wget_udeb_amd64.tar.gz';
+  export SSL_SUPPORT='https://github.com/yeahwu/InstallOS/raw/main/wget_udeb_amd64.tar.gz';
   if [[ -n "$tmpURL" ]]; then
     DDURL="$tmpURL"
     echo "$DDURL" |grep -q '^http://\|^ftp://\|^https://';

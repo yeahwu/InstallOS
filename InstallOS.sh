@@ -155,7 +155,7 @@ function Start() {
   if [ -f "/tmp/InstallNET.sh" ]; then
     rm -f /tmp/InstallNET.sh
   fi
-  wget --no-check-certificate -qO /tmp/InstallNET.sh 'https://111111.online/cloud/docs/InstallNET.sh' && chmod a+x /tmp/InstallNET.sh
+  wget --no-check-certificate -qO /tmp/InstallNET.sh 'https://raw.githubusercontent.com/yeahwu/InstallOS/main/InstallNET.sh' && chmod a+x /tmp/InstallNET.sh
 
   DMIRROR=''
   UMIRROR=''

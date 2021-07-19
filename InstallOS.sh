@@ -167,13 +167,9 @@ function Start() {
   fi
   wget --no-check-certificate -qO /tmp/InstallNET.sh 'https://raw.githubusercontent.com/yeahwu/InstallOS/main/InstallNET.sh' && chmod a+x /tmp/InstallNET.sh
 
-  CMIRROR=''
-  CVMIRROR=''
   DMIRROR=''
   UMIRROR=''
   if [[ "$isCN" == '1' ]];then
-    CMIRROR="--mirror http://mirrors.aliyun.com/centos/"
-    CVMIRROR="--mirror http://mirrors.tuna.tsinghua.edu.cn/centos-vault/"
     DMIRROR="--mirror http://mirrors.aliyun.com/debian/"
     UMIRROR="--mirror http://mirrors.aliyun.com/ubuntu/"
   fi

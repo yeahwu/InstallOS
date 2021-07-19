@@ -87,16 +87,6 @@ function SetNetwork() {
       }
     }
   fi
-  
-  if [[ -d '/etc/sysconfig/network-scripts' ]];then
-    cfgNum="$(find /etc/network/interfaces.d -name '*.cfg' |wc -l)" || cfgNum='0'
-    [[ "$cfgNum" -ne '0' ]] && {
-      for netConfig in `ls -1 /etc/sysconfig/network-scripts/ifcfg-* | grep -v 'lo$' | grep -v ':[0-9]\{1,\}'`
-      do
-        [[ ! -z "$(cat $netConfig | sed -n '/BOOTPROTO.*[sS][tT][aA][tT][iI][cC]/p')" ]] && isAuto='1'
-      done
-    }
-  fi
 }
 
 function NetMode() {
@@ -173,8 +163,6 @@ function Start() {
     DMIRROR="--mirror http://mirrors.aliyun.com/debian/"
     UMIRROR="--mirror http://mirrors.aliyun.com/ubuntu/"
   fi
-  
-  sed -i '/force-efi-extra-removable/d' /tmp/InstallNET.sh
 
   echo -e "\nPlease select an OS:"
   echo "  1) Debian 9"

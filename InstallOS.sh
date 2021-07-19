@@ -177,6 +177,8 @@ function Start() {
     DMIRROR="--mirror http://mirrors.aliyun.com/debian/"
     UMIRROR="--mirror http://mirrors.aliyun.com/ubuntu/"
   fi
+  
+  sed -i '/force-efi-extra-removable/d' /tmp/InstallNET.sh
 
   echo -e "\nPlease select an OS:"
   echo "  1) Debian 9"

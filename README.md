@@ -9,3 +9,5 @@ Installed the common software 'wget curl git vim net-tools'. Some other simple s
 Download and run the DD script:
 
 `wget https://raw.githubusercontent.com/yeahwu/InstallOS/main/InstallOS.sh && bash InstallOS.sh`
+
+Default root password: `111111.online`

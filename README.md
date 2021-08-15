@@ -1,6 +1,6 @@
 # InstallOS
 
-DD Linux systems on VPS with support for Debian 9, 10 and Ubuntu 18.04, 20.04.
+DD Linux systems on VPS with support for Debian 9, 10, 11 and Ubuntu 18.04, 20.04.
 
 Partitioned /boot, /swap, and root partitions. The partition /boot is 160MB, swap partition is 1 times the memory, and the rest is allocated to the root partition.
 

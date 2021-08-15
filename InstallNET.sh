@@ -671,6 +671,7 @@ cp -f '/net.bat' './net.bat'; \
 /sbin/reboot; \
 debconf-set grub-installer/bootdev string "\$(list-devices disk |head -n1)"; \
 umount /media || true; \
+
 d-i partman/mount_style select uuid
 d-i partman-auto/init_automatically_partition select Guided - use entire disk
 d-i partman-auto/choose_recipe select All files in one partition (recommended for new users)
@@ -687,12 +688,7 @@ d-i partman/confirm_nooverwrite boolean true
 d-i debian-installer/allow_unauthenticated boolean true
 tasksel tasksel/first multiselect minimal
 d-i pkgsel/update-policy select none
-d-i pkgsel/include string openssh-server \
-    vim \
-    git \
-    wget \
-    curl \
-    net-tools
+d-i pkgsel/include string openssh-server
 d-i pkgsel/upgrade select none
 popularity-contest popularity-contest/participate boolean false
 d-i grub-installer/only_debian boolean true

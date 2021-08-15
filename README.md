@@ -10,4 +10,4 @@ Download and run the DD script:
 
 Default root password: `111111.online`
 
-![dd](https://user-images.githubusercontent.com/13328328/129486577-de891913-e122-48bd-adb3-6a8298bcec01.JPG)
+![dss](https://user-images.githubusercontent.com/13328328/129486675-71a53f9b-fe85-4313-973b-4863c3b0d0b8.JPG)

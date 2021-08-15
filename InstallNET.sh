@@ -180,7 +180,11 @@ function SelectMirror(){
   relese=$(echo $Relese |sed -r 's/(.*)/\L\1/')
   if [ "$Relese" == "Debian" ] || [ "$Relese" == "Ubuntu" ]; then
     inUpdate=''; [ "$Relese" == "Ubuntu" ] && inUpdate='-updates'
-    MirrorTEMP="SUB_MIRROR/dists/${DIST}${inUpdate}/main/installer-${VER}/current/images/netboot/${relese}-installer/${VER}/initrd.gz"
+    if [[ "$isDigital" == '20.04' ]] || [[ "$DIST" == 'focal' ]]; then
+      MirrorTEMP="SUB_MIRROR/dists/${DIST}/main/installer-${VER}/current/legacy-images/netboot/${relese}-installer/${VER}/initrd.gz"
+    else
+      MirrorTEMP="SUB_MIRROR/dists/${DIST}${inUpdate}/main/installer-${VER}/current/images/netboot/${relese}-installer/${VER}/initrd.gz"
+    fi
   elif [ "$Relese" == "CentOS" ]; then
     MirrorTEMP="SUB_MIRROR/${DIST}/os/${VER}/isolinux/initrd.img"
   fi
@@ -207,7 +211,7 @@ clear && echo -e "\n\033[36m# Check Dependence\033[0m\n"
 if [[ "$ddMode" == '1' ]]; then
   CheckDependence iconv;
   linux_relese='debian';
-  tmpDIST='jessie';
+  tmpDIST='stretch';
   tmpVER='amd64';
   tmpINS='auto';
 fi
@@ -244,7 +248,7 @@ fi
 [ -z "$VER" ] && VER='amd64'
 
 if [[ -z "$tmpDIST" ]]; then
-  [ "$Relese" == 'Debian' ] && tmpDIST='jessie' && DIST='buster';
+  [ "$Relese" == 'Debian' ] && tmpDIST='jessie' && DIST='jessie';
   [ "$Relese" == 'Ubuntu' ] && tmpDIST='bionic' && DIST='bionic';
   [ "$Relese" == 'CentOS' ] && tmpDIST='6.10' && DIST='6.10';
 fi
@@ -401,10 +405,17 @@ echo -e "\n[\033[33m$Relese\033[0m] [\033[33m$DIST\033[0m] [\033[33m$VER\033[0m]
 
 if [[ "$linux_relese" == 'debian' ]] || [[ "$linux_relese" == 'ubuntu' ]]; then
   inUpdate=''; [ "$linux_relese" == 'ubuntu' ] && inUpdate='-updates'
-  wget --no-check-certificate -qO '/boot/initrd.img' "${LinuxMirror}/dists/${DIST}${inUpdate}/main/installer-${VER}/current/images/netboot/${linux_relese}-installer/${VER}/initrd.gz"
-  [[ $? -ne '0' ]] && echo -ne "\033[31mError! \033[0mDownload 'initrd.img' for \033[33m$linux_relese\033[0m failed! \n" && exit 1
-  wget --no-check-certificate -qO '/boot/vmlinuz' "${LinuxMirror}/dists/${DIST}${inUpdate}/main/installer-${VER}/current/images/netboot/${linux_relese}-installer/${VER}/linux"
-  [[ $? -ne '0' ]] && echo -ne "\033[31mError! \033[0mDownload 'vmlinuz' for \033[33m$linux_relese\033[0m failed! \n" && exit 1
+  if [[ "$isDigital" == '20.04' ]] || [[ "$DIST" == 'focal' ]]; then
+    wget --no-check-certificate -qO '/boot/initrd.img' "${LinuxMirror}/dists/${DIST}/main/installer-${VER}/current/legacy-images/netboot/${linux_relese}-installer/${VER}/initrd.gz"
+    [[ $? -ne '0' ]] && echo -ne "\033[31mError! \033[0mDownload 'initrd.img' for \033[33m$linux_relese\033[0m failed! \n" && exit 1
+    wget --no-check-certificate -qO '/boot/vmlinuz' "${LinuxMirror}/dists/${DIST}/main/installer-${VER}/current/legacy-images/netboot/${linux_relese}-installer/${VER}/linux"
+    [[ $? -ne '0' ]] && echo -ne "\033[31mError! \033[0mDownload 'vmlinuz' for \033[33m$linux_relese\033[0m failed! \n" && exit 1
+  else
+    wget --no-check-certificate -qO '/boot/initrd.img' "${LinuxMirror}/dists/${DIST}${inUpdate}/main/installer-${VER}/current/images/netboot/${linux_relese}-installer/${VER}/initrd.gz"
+    [[ $? -ne '0' ]] && echo -ne "\033[31mError! \033[0mDownload 'initrd.img' for \033[33m$linux_relese\033[0m failed! \n" && exit 1
+    wget --no-check-certificate -qO '/boot/vmlinuz' "${LinuxMirror}/dists/${DIST}${inUpdate}/main/installer-${VER}/current/images/netboot/${linux_relese}-installer/${VER}/linux"
+    [[ $? -ne '0' ]] && echo -ne "\033[31mError! \033[0mDownload 'vmlinuz' for \033[33m$linux_relese\033[0m failed! \n" && exit 1
+  fi
   MirrorHost="$(echo "$LinuxMirror" |awk -F'://|/' '{print $2}')";
   MirrorFolder="$(echo "$LinuxMirror" |awk -F''${MirrorHost}'' '{print $2}')";
 elif [[ "$linux_relese" == 'centos' ]]; then
@@ -422,8 +433,8 @@ if [[ "$linux_relese" == 'debian' ]]; then
     [[ $? -ne '0' ]] && echo -ne "\033[31mError! \033[0mDownload 'firmware' for \033[33m$linux_relese\033[0m failed! \n" && exit 1
   fi
   if [[ "$ddMode" == '1' ]]; then
-    vKernel_udeb=$(wget --no-check-certificate -qO- "http://$DISTMirror/dists/$DIST/main/installer-$VER/current/images/udeb.list" |grep '^acpi-modules' |head -n1 |grep -o '[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}-[0-9]\{1,2\}' |head -n1)
-    [[ -z "vKernel_udeb" ]] && vKernel_udeb="3.16.0-6"
+    vKernel_udeb=$(wget --no-check-certificate -qO- "${LinuxMirror}/dists/${DIST}/main/installer-${VER}/current/images/udeb.list" |grep '^acpi-modules' |head -n1 |grep -o '[0-9]\{1,2\}.[0-9]\{1,2\}.[0-9]\{1,2\}-[0-9]\{1,2\}' |head -n1)
+    [[ -z "vKernel_udeb" ]] && vKernel_udeb="4.9.0-13"
   fi
 fi
 
@@ -635,8 +646,11 @@ if [[ "$linux_relese" == 'debian' ]] || [[ "$linux_relese" == 'ubuntu' ]]; then
 cat >/tmp/boot/preseed.cfg<<EOF
 d-i debian-installer/locale string en_US
 d-i console-setup/layoutcode string us
+
 d-i keyboard-configuration/xkb-keymap string us
+
 d-i netcfg/choose_interface select $IFETH
+
 d-i netcfg/disable_autoconfig boolean true
 d-i netcfg/dhcp_failed note
 d-i netcfg/dhcp_options select Configure network manually
@@ -646,20 +660,25 @@ d-i netcfg/get_gateway string $GATE
 d-i netcfg/get_nameservers string 8.8.8.8
 d-i netcfg/no_default_route boolean true
 d-i netcfg/confirm_static boolean true
+
 d-i hw-detect/load_firmware boolean true
+
 d-i mirror/country string manual
 d-i mirror/http/hostname string $MirrorHost
 d-i mirror/http/directory string $MirrorFolder
 d-i mirror/http/proxy string
 d-i apt-setup/services-select multiselect
+
 d-i passwd/root-login boolean ture
 d-i passwd/make-user boolean false
 d-i passwd/root-password-crypted password $myPASSWORD
 d-i user-setup/allow-password-weak boolean true
 d-i user-setup/encrypt-home boolean false
+
 d-i clock-setup/utc boolean true
 d-i time/zone string US/Eastern
 d-i clock-setup/ntp boolean true
+
 d-i preseed/early_command string anna-install libfuse2-udeb fuse-udeb ntfs-3g-udeb fuse-modules-${vKernel_udeb}-amd64-di
 d-i partman/early_command string [[ -n "\$(blkid -t TYPE='vfat' -o device)" ]] && umount "\$(blkid -t TYPE='vfat' -o device)"; \
 debconf-set partman-auto/disk "\$(list-devices disk |head -n1)"; \
@@ -685,7 +704,9 @@ d-i partman-lvm/confirm boolean true
 d-i partman-lvm/confirm_nooverwrite boolean true
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
+
 d-i debian-installer/allow_unauthenticated boolean true
+
 tasksel tasksel/first multiselect minimal
 d-i pkgsel/update-policy select none
 d-i pkgsel/include string openssh-server \
@@ -695,10 +716,11 @@ d-i pkgsel/include string openssh-server \
     curl \
     net-tools
 d-i pkgsel/upgrade select none
+
 popularity-contest popularity-contest/participate boolean false
+
 d-i grub-installer/only_debian boolean true
 d-i grub-installer/bootdev string default
-d-i grub-installer/force-efi-extra-removable boolean true
 d-i finish-install/reboot_in_progress note
 d-i debian-installer/exit/reboot boolean true
 d-i preseed/late_command string	\
@@ -742,7 +764,7 @@ EOF
 
 [[ "$ddMode" == '1' ]] && {
 WinNoDHCP(){
-  echo -ne "for\0040\0057f\0040\0042tokens\00753\0052\0042\0040\0045\0045i\0040in\0040\0050\0047netsh\0040interface\0040show\0040interface\0040\0136\0174more\0040\00533\0040\0136\0174findstr\0040\0057I\0040\0057R\0040\0042本地\0056\0052\0040以太\0056\0052\0040Local\0056\0052\0040Ethernet\0042\0047\0051\0040do\0040\0050set\0040EthName\0075\0045\0045j\0051\r\nnetsh\0040\0055c\0040interface\0040ip\0040set\0040address\0040name\0075\0042\0045EthName\0045\0042\0040source\0075static\0040address\0075$IPv4\0040mask\0075$MASK\0040gateway\0075$GATE\r\nnetsh\0040\0055c\0040interface\0040ip\0040add\0040dnsservers\0040name\0075\0042\0045EthName\0045\0042\0040address\00758\00568\00568\00568\0040index\00751\0040validate\0075no\r\n\r\n" >>'/tmp/boot/net.tmp';
+  echo -ne "for\0040\0057f\0040\0042tokens\00753\0052\0042\0040\0045\0045i\0040in\0040\0050\0047netsh\0040interface\0040show\0040interface\0040\0136\0174more\0040\00533\0040\0136\0174findstr\0040\0057I\0040\0057R\0040\0042æœ¬åœ°\0056\0052\0040ä»¥å¤ª\0056\0052\0040Local\0056\0052\0040Ethernet\0042\0047\0051\0040do\0040\0050set\0040EthName\0075\0045\0045j\0051\r\nnetsh\0040\0055c\0040interface\0040ip\0040set\0040address\0040name\0075\0042\0045EthName\0045\0042\0040source\0075static\0040address\0075$IPv4\0040mask\0075$MASK\0040gateway\0075$GATE\r\nnetsh\0040\0055c\0040interface\0040ip\0040add\0040dnsservers\0040name\0075\0042\0045EthName\0045\0042\0040address\00758\00568\00568\00568\0040index\00751\0040validate\0075no\r\n\r\n" >>'/tmp/boot/net.tmp';
 }
 WinRDP(){
   echo -ne "netsh\0040firewall\0040set\0040portopening\0040protocol\0075ALL\0040port\0075$WinRemote\0040name\0075RDP\0040mode\0075ENABLE\0040scope\0075ALL\0040profile\0075ALL\r\nnetsh\0040firewall\0040set\0040portopening\0040protocol\0075ALL\0040port\0075$WinRemote\0040name\0075RDP\0040mode\0075ENABLE\0040scope\0075ALL\0040profile\0075CURRENT\r\nreg\0040add\0040\0042HKLM\0134SYSTEM\0134CurrentControlSet\0134Control\0134Network\0134NewNetworkWindowOff\0042\0040\0057f\r\nreg\0040add\0040\0042HKLM\0134SYSTEM\0134CurrentControlSet\0134Control\0134Terminal\0040Server\0042\0040\0057v\0040fDenyTSConnections\0040\0057t\0040reg\0137dword\0040\0057d\00400\0040\0057f\r\nreg\0040add\0040\0042HKLM\0134SYSTEM\0134CurrentControlSet\0134Control\0134Terminal\0040Server\0134Wds\0134rdpwd\0134Tds\0134tcp\0042\0040\0057v\0040PortNumber\0040\0057t\0040reg\0137dword\0040\0057d\0040$WinRemote\0040\0057f\r\nreg\0040add\0040\0042HKLM\0134SYSTEM\0134CurrentControlSet\0134Control\0134Terminal\0040Server\0134WinStations\0134RDP\0055Tcp\0042\0040\0057v\0040PortNumber\0040\0057t\0040reg\0137dword\0040\0057d\0040$WinRemote\0040\0057f\r\nreg\0040add\0040\0042HKLM\0134SYSTEM\0134CurrentControlSet\0134Control\0134Terminal\0040Server\0134WinStations\0134RDP\0055Tcp\0042\0040\0057v\0040UserAuthentication\0040\0057t\0040reg\0137dword\0040\0057d\00400\0040\0057f\r\nFOR\0040\0057F\0040\0042tokens\00752\0040delims\0075\0072\0042\0040\0045\0045i\0040in\0040\0050\0047SC\0040QUERYEX\0040TermService\0040\0136\0174FINDSTR\0040\0057I\0040\0042PID\0042\0047\0051\0040do\0040TASKKILL\0040\0057F\0040\0057PID\0040\0045\0045i\r\nFOR\0040\0057F\0040\0042tokens\00752\0040delims\0075\0072\0042\0040\0045\0045i\0040in\0040\0050\0047SC\0040QUERYEX\0040UmRdpService\0040\0136\0174FINDSTR\0040\0057I\0040\0042PID\0042\0047\0051\0040do\0040TASKKILL\0040\0057F\0040\0057PID\0040\0045\0045i\r\nSC\0040START\0040TermService\r\n\r\n" >>'/tmp/boot/net.tmp';
@@ -760,7 +782,7 @@ WinRDP(){
     echo -ne '\nAdd ssl support...\n'
     [[ -n $SSL_SUPPORT ]] && {
       wget --no-check-certificate -qO- "$SSL_SUPPORT" |tar -x
-      [[ ! -f  /tmp/boot/usr/bin/wget ]] && echo 'Error! SSL_SUPPORT.' && exit 1;
+      [[ ! -f /tmp/boot/usr/bin/wget ]] && echo 'Error! SSL_SUPPORT.' && exit 1;
       sed -i 's/wget\ -qO-/\/usr\/bin\/wget\ --no-check-certificate\ --retry-connrefused\ --tries=7\ --continue\ -qO-/g' /tmp/boot/preseed.cfg
       [[ $? -eq '0' ]] && echo -ne 'Success! \n\n'
     } || {
@@ -800,13 +822,16 @@ bootloader --location=mbr --append="rhgb quiet crashkernel=auto"
 zerombr
 clearpart --all --initlabel 
 autopart
+
 %packages
 @base
 %end
+
 %post --interpreter=/bin/bash
 rm -rf /root/anaconda-ks.cfg
 rm -rf /root/install.*log
 %end
+
 EOF
 
 [[ "$setNet" == '0' ]] && [[ "$AutoNet" == '1' ]] && {
@@ -837,7 +862,7 @@ chown root:root $GRUBDIR/$GRUBFILE
 chmod 444 $GRUBDIR/$GRUBFILE
 
 if [[ "$loaderMode" == "0" ]]; then
-  sleep 3 && reboot || sudo reboot >/dev/null 2>&1
+  sleep 3 && reboot >/dev/null 2>&1
 else
   rm -rf "$HOME/loader"
   mkdir -p "$HOME/loader"

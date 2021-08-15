@@ -688,7 +688,12 @@ d-i partman/confirm_nooverwrite boolean true
 d-i debian-installer/allow_unauthenticated boolean true
 tasksel tasksel/first multiselect minimal
 d-i pkgsel/update-policy select none
-d-i pkgsel/include string openssh-server
+d-i pkgsel/include string openssh-server \
+    vim \
+    git \
+    wget \
+    curl \
+    net-tools
 d-i pkgsel/upgrade select none
 popularity-contest popularity-contest/participate boolean false
 d-i grub-installer/only_debian boolean true

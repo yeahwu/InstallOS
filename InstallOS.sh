@@ -87,6 +87,16 @@ function SetNetwork() {
       }
     }
   fi
+
+  if [[ -d '/etc/sysconfig/network-scripts' ]];then
+    cfgNum="$(find /etc/network/interfaces.d -name '*.cfg' |wc -l)" || cfgNum='0'
+    [[ "$cfgNum" -ne '0' ]] && {
+      for netConfig in `ls -1 /etc/sysconfig/network-scripts/ifcfg-* | grep -v 'lo$' | grep -v ':[0-9]\{1,\}'`
+      do
+        [[ ! -z "$(cat $netConfig | sed -n '/BOOTPROTO.*[sS][tT][aA][tT][iI][cC]/p')" ]] && isAuto='1'
+      done
+    }
+  fi
 }
 
 function NetMode() {
@@ -155,6 +165,7 @@ function Start() {
   if [ -f "/tmp/InstallNET.sh" ]; then
     rm -f /tmp/InstallNET.sh
   fi
+
   wget --no-check-certificate -qO /tmp/InstallNET.sh 'https://raw.githubusercontent.com/yeahwu/InstallOS/main/InstallNET.sh' && chmod a+x /tmp/InstallNET.sh
 
   DMIRROR=''
@@ -167,18 +178,20 @@ function Start() {
   echo -e "\nPlease select an OS:"
   echo "  1) Debian 9"
   echo "  2) Debian 10"
-  echo "  3) Ubuntu 18.04"
-  echo "  4) Ubuntu 20.04"
-  echo "  5) Custom image"
+  echo "  3) Debian 11"
+  echo "  4) Ubuntu 18.04"
+  echo "  5) Ubuntu 20.04"
+  echo "  6) Custom image"
   echo "  0) Exit"
   echo -ne "\nYour option: "
   read N
   case $N in
     1) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -d 9 -v 64 -a $NETSTR $DMIRROR ;;
     2) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -d 10 -v 64 -a $NETSTR $DMIRROR ;;
-    3) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -u 18.04 -v 64 -a $NETSTR $UMIRROR ;;
-    4) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -u 20.04 -v 64 -a $NETSTR $UMIRROR ;;
-    5)
+    3) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -d 11 -v 64 -a $NETSTR $DMIRROR ;;
+    4) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -u 18.04 -v 64 -a $NETSTR $UMIRROR ;;
+    5) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -u 20.04 -v 64 -a $NETSTR $UMIRROR ;;
+    6)
       echo -e "\n"
       read -r -p "Custom image URL: " imgURL
       echo -e "\n"

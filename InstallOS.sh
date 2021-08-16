@@ -19,6 +19,7 @@ if [ -f "/usr/bin/apt-get" ];then
 		sleep 3s
 	fi
 else
+    yum install -y epel-release
     yum install -y xz openssl gawk file curl
     sleep 3s
 fi

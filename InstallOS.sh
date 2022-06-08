@@ -28,9 +28,9 @@ function CopyRight() {
   clear
   echo "----------------------------------------------"
   echo ""
-  echo "BBS: https://1024.day"
+  echo "Forum: https://1024.day"
   echo ""
-  echo "TG Channel: https://t.me/yeahwu_channel"
+  echo "Blog: https://1kb.day"
   echo ""
   echo "Supports DD to Ubuntu and Debian systems only."
   echo ""

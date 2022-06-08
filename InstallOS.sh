@@ -1,5 +1,5 @@
 #!/bin/sh
-## Default root password: 111111.online
+## Default root password: 1024.day
 
 if [[ $EUID -ne 0 ]]; then
     clear
@@ -28,7 +28,7 @@ function CopyRight() {
   clear
   echo "----------------------------------------------"
   echo ""
-  echo "Blog: https://111111.online"
+  echo "BBS: https://1024.day"
   echo ""
   echo "TG Channel: https://t.me/yeahwu_channel"
   echo ""
@@ -187,11 +187,11 @@ function Start() {
   echo -ne "\nYour option: "
   read N
   case $N in
-    1) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -d 9 -v 64 -a $NETSTR $DMIRROR ;;
-    2) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -d 10 -v 64 -a $NETSTR $DMIRROR ;;
-    3) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -d 11 -v 64 -a $NETSTR $DMIRROR ;;
-    4) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -u 18.04 -v 64 -a $NETSTR $UMIRROR ;;
-    5) echo -e "\nPassword: 111111.online\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -u 20.04 -v 64 -a $NETSTR $UMIRROR ;;
+    1) echo -e "\nPassword: 1024.day\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -d 9 -v 64 -a $NETSTR $DMIRROR ;;
+    2) echo -e "\nPassword: 1024.day\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -d 10 -v 64 -a $NETSTR $DMIRROR ;;
+    3) echo -e "\nPassword: 1024.day\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -d 11 -v 64 -a $NETSTR $DMIRROR ;;
+    4) echo -e "\nPassword: 1024.day\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -u 18.04 -v 64 -a $NETSTR $UMIRROR ;;
+    5) echo -e "\nPassword: 1024.day\n"; read -s -n1 -p "Press any key to continue..." ; bash /tmp/InstallNET.sh -u 20.04 -v 64 -a $NETSTR $UMIRROR ;;
     6)
       echo -e "\n"
       read -r -p "Custom image URL: " imgURL

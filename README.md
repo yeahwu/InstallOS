@@ -8,6 +8,6 @@ Download and run the DD script:
 
 `wget https://raw.githubusercontent.com/yeahwu/InstallOS/main/InstallOS.sh && bash InstallOS.sh`
 
-Default root password: `111111.online`
+Default root password: `1024.day`
 
 ![dss](https://user-images.githubusercontent.com/13328328/129486675-71a53f9b-fe85-4313-973b-4863c3b0d0b8.JPG)

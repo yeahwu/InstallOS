@@ -1,7 +1,7 @@
 #!/bin/bash
 ## License: GPL
 ## It can reinstall Debian, Ubuntu, system with network.
-## Default root password: 111111.online
+## Default root password: 1024.day
 
 export tmpVER=''
 export tmpDIST=''
@@ -347,7 +347,7 @@ fi
 
 [ -n "$ipAddr" ] && [ -n "$ipMask" ] && [ -n "$ipGate" ] && setNet='1';
 [[ -n "$tmpWORD" ]] && myPASSWORD="$(openssl passwd -1 "$tmpWORD")";
-[[ -z "$myPASSWORD" ]] && myPASSWORD='$1$R0efmva1$toOpXSdxt3yF8dvELXAMQ0';
+[[ -z "$myPASSWORD" ]] && myPASSWORD='$1$zBF6Hzc1$T0g7ltndW7C/cckPeeo9J1';
 
 if [[ -n "$interface" ]]; then
   IFETH="$interface"
@@ -691,19 +691,30 @@ cp -f '/net.bat' './net.bat'; \
 debconf-set grub-installer/bootdev string "\$(list-devices disk |head -n1)"; \
 umount /media || true; \
 
-d-i partman/mount_style select uuid
-d-i partman-auto/init_automatically_partition select Guided - use entire disk
-d-i partman-auto/choose_recipe select All files in one partition (recommended for new users)
+d-i partman-auto/disk string
 d-i partman-auto/method string regular
-d-i partman-lvm/device_remove_lvm boolean true
-d-i partman-md/device_remove_md boolean true
-d-i partman-auto/choose_recipe select atomic
+d-i partman-auto/expert_recipe string         \
+   boot-root ::                               \
+      40 50 200 ext4                          \
+         $primary{ } $bootable{ }             \
+         method{ format } format{ }           \
+         use_filesystem{ } filesystem{ ext4 } \
+         mountpoint{ /boot } .                \
+      500 1000 -1 ext4                	      \
+         $primary{ }                          \
+         method{ format } format{ }           \
+         use_filesystem{ } filesystem{ ext4 } \
+         mountpoint{ / } .                    \
+      64 512 0 linux-swap                  \
+         method{ swap } format{ } .
 d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman-auto/choose_recipe select boot-root
 d-i partman/choose_partition select finish
-d-i partman-lvm/confirm boolean true
-d-i partman-lvm/confirm_nooverwrite boolean true
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
+d-i partman/default_filesystem string ext4
+d-i partman/mount_style select uuid
+
 
 d-i debian-installer/allow_unauthenticated boolean true
 
@@ -714,6 +725,7 @@ d-i pkgsel/include string openssh-server \
     git \
     wget \
     curl \
+    telnet \
     net-tools
 d-i pkgsel/upgrade select none
 
